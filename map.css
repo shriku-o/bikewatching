@@ -4,8 +4,32 @@ body {
   height: 100%;
 }
 
+header {
+  display: flex;
+  gap: 1em;
+  align-items: baseline;
+}
+
+header label {
+  margin-left: auto; /* push the slider to the right */
+}
+
+header label input {
+  vertical-align: middle;
+}
+
+header time,
+header em {
+  display: block; /* own line so the slider doesn't jump around */
+}
+
+header em {
+  color: gray;
+  font-style: italic;
+}
+
 #map {
-  flex: 1; /* fill the space left under the <h1> */
+  flex: 1; /* fill the space left under the header */
   width: 100%;
   min-height: 400px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
