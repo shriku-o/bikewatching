@@ -5,9 +5,18 @@ body {
 }
 
 #map {
-  flex: 1; 
+  flex: 1; /* fill the space left under the <h1> */
   width: 100%;
   min-height: 400px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
+}
+
+/* SVG overlay for station markers */
+#map svg {
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* lets you still pan and zoom the map */
 }
