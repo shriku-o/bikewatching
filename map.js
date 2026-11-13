@@ -163,6 +163,9 @@ map.on('load', async () => {
     .domain([0, d3.max(stations, (d) => d.totalTraffic)])
     .range([0, 25]);
 
+  // Custom tooltip element
+  const tooltip = document.getElementById('tooltip');
+
   // Append a circle for each station, keyed by station ID
   const circles = svg
     .selectAll('circle')
@@ -170,12 +173,17 @@ map.on('load', async () => {
     .enter()
     .append('circle')
     .attr('r', (d) => radiusScale(d.totalTraffic))
-    .each(function (d) {
-      d3.select(this)
-        .append('title')
-        .text(
-          `${d.totalTraffic} trips (${d.departures} departures, ${d.arrivals} arrivals)`,
-        );
+    .on('mouseenter', (event, d) => {
+      tooltip.style.display = 'block';
+      tooltip.innerHTML = `<strong>${d.NAME ?? d.name ?? stationId(d)}</strong><br>
+        ${d.totalTraffic} trips (${d.departures} departures, ${d.arrivals} arrivals)`;
+    })
+    .on('mousemove', (event) => {
+      tooltip.style.left = `${event.clientX + 12}px`;
+      tooltip.style.top = `${event.clientY + 12}px`;
+    })
+    .on('mouseleave', () => {
+      tooltip.style.display = 'none';
     });
 
   // Reposition circles whenever the map moves/zooms
@@ -192,8 +200,7 @@ map.on('load', async () => {
   map.on('resize', updatePositions);
   map.on('moveend', updatePositions);
 
-  // ---- Step 5: time slider ----
-  // (no "#" in getElementById, since it takes a plain id)
+  // ---- Time slider ----
   const timeSlider = document.getElementById('time-slider');
   const selectedTime = document.getElementById('selected-time');
   const anyTimeLabel = document.getElementById('any-time');
@@ -211,15 +218,7 @@ map.on('load', async () => {
     circles
       .data(filteredStations, (d) => stationId(d))
       .join('circle')
-      .attr('r', (d) => radiusScale(d.totalTraffic))
-      .each(function (d) {
-        // Keep the tooltip text in sync with the filtered numbers
-        d3.select(this)
-          .select('title')
-          .text(
-            `${d.totalTraffic} trips (${d.departures} departures, ${d.arrivals} arrivals)`,
-          );
-      });
+      .attr('r', (d) => radiusScale(d.totalTraffic));
   }
 
   // Update the label and the map when the slider moves

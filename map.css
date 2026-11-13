@@ -50,5 +50,18 @@ header em {
   fill-opacity: 60%;
   stroke: white;
   stroke-width: 1;
-  pointer-events: auto; /* re-enable hover so tooltips show */
+  pointer-events: auto; /* re-enable hover so the tooltip shows */
+}
+
+/* Custom tooltip */
+#tooltip {
+  position: fixed;
+  display: none;
+  pointer-events: none;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 0.4em 0.7em;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  z-index: 10;
 }
