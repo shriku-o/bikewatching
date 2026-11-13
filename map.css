@@ -20,3 +20,11 @@ body {
   height: 100%;
   pointer-events: none; /* lets you still pan and zoom the map */
 }
+
+#map svg circle {
+  fill: steelblue;
+  fill-opacity: 60%;
+  stroke: white;
+  stroke-width: 1;
+  pointer-events: auto; /* re-enable hover so tooltips show */
+}

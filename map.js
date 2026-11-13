@@ -30,7 +30,6 @@ const bikeLaneStyle = {
 const svg = d3.select('#map').select('svg');
 
 // Convert a station's lon/lat into pixel coordinates on the map.
-// Defined globally so it can be used during pan/zoom updates.
 function getCoords(station) {
   // Handles either "lon"/"lat" or "Long"/"Lat" field names
   const lon = +(station.lon ?? station.Long);
@@ -72,43 +71,13 @@ map.on('load', async () => {
   let stations = [];
   try {
     const jsonurl = 'https://dsc106.com/labs/lab07/data/bluebikes-stations.json';
-
-    // Await JSON fetch
     const jsonData = await d3.json(jsonurl);
-    console.log('Loaded JSON Data:', jsonData); // Verify structure
+    console.log('Loaded JSON Data:', jsonData);
 
-    // Station data is nested under data.stations (falls back to a plain array)
     stations = jsonData?.data?.stations ?? jsonData;
     console.log('Stations Array:', stations);
   } catch (error) {
     console.error('Error loading JSON:', error);
   }
 
-  // Append a circle to the SVG for each station
-  const circles = svg
-    .selectAll('circle')
-    .data(stations)
-    .enter()
-    .append('circle')
-    .attr('r', 5) // Radius of the circle
-    .attr('fill', 'steelblue') // Circle fill color
-    .attr('stroke', 'white') // Circle border color
-    .attr('stroke-width', 1) // Circle border thickness
-    .attr('opacity', 0.8); // Circle opacity
-
-  // Reposition circles whenever the map moves/zooms
-  function updatePositions() {
-    circles
-      .attr('cx', (d) => getCoords(d).cx)
-      .attr('cy', (d) => getCoords(d).cy);
-  }
-
-  // Initial position update when map loads
-  updatePositions();
-
-  // Reposition markers on map interactions
-  map.on('move', updatePositions); // Update during map movement
-  map.on('zoom', updatePositions); // Update during zooming
-  map.on('resize', updatePositions); // Update on window resize
-  map.on('moveend', updatePositions); // Final adjustment after movement ends
-});
+  //
