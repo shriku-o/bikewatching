@@ -45,12 +45,47 @@ header em {
   pointer-events: none; /* lets you still pan and zoom the map */
 }
 
+/* Shared color logic for the circles and the legend swatches */
+#map svg circle,
+.legend > div {
+  --color-departures: steelblue;
+  --color-arrivals: darkorange;
+  --color: color-mix(
+    in oklch,
+    var(--color-departures) calc(100% * var(--departure-ratio)),
+    var(--color-arrivals)
+  );
+}
+
 #map svg circle {
-  fill: steelblue;
+  fill: var(--color);
   fill-opacity: 60%;
   stroke: white;
   stroke-width: 1;
   pointer-events: auto; /* re-enable hover so the tooltip shows */
+}
+
+/* Legend (Design 1: blocks) */
+.legend {
+  display: flex;
+  gap: 1px; /* just enough to keep the colors from touching */
+  margin-block: 1em;
+}
+
+.legend > div {
+  flex: 1;
+  padding: 0.5em 2em; /* more horizontal than vertical padding */
+  background: var(--color);
+  color: white;
+  text-align: center;
+}
+
+.legend > div:first-child {
+  text-align: left;
+}
+
+.legend > div:last-child {
+  text-align: right;
 }
 
 /* Custom tooltip */

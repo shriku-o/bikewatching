@@ -30,11 +30,21 @@ const bikeLaneStyle = {
 // Select the SVG overlay inside the map container
 const svg = d3.select('#map').select('svg');
 
+// Quantize scale: departure ratio (0 to 1) -> one of three discrete values
+const stationFlow = d3.scaleQuantize().domain([0, 1]).range([0, 0.5, 1]);
+
 // ---------- Global helper functions ----------
 
 // Station ID (handout uses short_name; falls back to Number)
 function stationId(station) {
   return station.short_name ?? station.Number;
+}
+
+// Departure ratio mapped to 0, 0.5 or 1 (stations with no traffic count as balanced)
+function flowValue(station) {
+  return station.totalTraffic
+    ? stationFlow(station.departures / station.totalTraffic)
+    : 0.5;
 }
 
 // Convert a station's lon/lat into pixel coordinates on the map
@@ -173,6 +183,7 @@ map.on('load', async () => {
     .enter()
     .append('circle')
     .attr('r', (d) => radiusScale(d.totalTraffic))
+    .style('--departure-ratio', (d) => flowValue(d))
     .on('mouseenter', (event, d) => {
       tooltip.style.display = 'block';
       tooltip.innerHTML = `<strong>${d.NAME ?? d.name ?? stationId(d)}</strong><br>
@@ -205,7 +216,7 @@ map.on('load', async () => {
   const selectedTime = document.getElementById('selected-time');
   const anyTimeLabel = document.getElementById('any-time');
 
-  // Recompute traffic for the selected time and resize the circles
+  // Recompute traffic for the selected time, then resize and recolor circles
   function updateScatterPlot(timeFilter) {
     const filteredTrips = filterTripsbyTime(trips, timeFilter);
     const filteredStations = computeStationTraffic(stations, filteredTrips);
@@ -218,7 +229,8 @@ map.on('load', async () => {
     circles
       .data(filteredStations, (d) => stationId(d))
       .join('circle')
-      .attr('r', (d) => radiusScale(d.totalTraffic));
+      .attr('r', (d) => radiusScale(d.totalTraffic))
+      .style('--departure-ratio', (d) => flowValue(d));
   }
 
   // Update the label and the map when the slider moves
